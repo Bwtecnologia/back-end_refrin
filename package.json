@@ -1,21 +1,24 @@
 {
-  "name": "login-mongodb",
+  "name": "refrin",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "nodemon ./app.js localhost 5001",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^6.8.1"
+    "mongoose": "^6.8.1",
+    "mysql2": "^3.2.1",
+    "sequelize": "^6.31.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
