@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
-var cors = require("cors");
+const cors = require("cors");
 
 const conn = require("./config/conn");
 
@@ -17,12 +17,9 @@ app.use(express.urlencoded({ extended: false }));
 //config para o cors
 app.use(cors());
 
-const userRoutes = require('./routes/UserRoutes')
-
 // rotas
 const router = require("./routes/routes");
 app.use(router);
-
 
 conn
   //.sync({ force: true })

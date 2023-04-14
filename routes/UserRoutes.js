@@ -4,6 +4,7 @@ const router = express.Router();
 // controller
 const {
   register,
+  getCurrentUser,
   getUserById,
   login,
 } = require("../controllers/UserController");
@@ -11,6 +12,8 @@ const {
 // middlewares
 const checkToken = require("../middlewares/checkToken");
 
+// get current user
+router.get("/", checkToken, getCurrentUser);
 //register user
 router.post("/register", register);
 // get user by id

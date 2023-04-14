@@ -13,10 +13,10 @@ const generateToken = (id) => {
 
 // REGISTER USER
 const register = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, role } = req.body;
 
   //validations
-  if (!username || !email || !password) {
+  if (!username || !email || !password || !role) {
     return res
       .status(400)
       .json({ msg: "Informe todos os dados para se cadastrar" });
@@ -35,11 +35,14 @@ const register = async (req, res) => {
   const checkIfUserExists = await User.findOne({
     where: { username: username },
   });
-
   if (checkIfUserExists) {
-    res
-      .status(403)
-      .json({ msg: "Email já cadastrado, por favor ultilize outro" });
+    res.status(403).json({ msg: "Usuário já cadastrado" });
+    return;
+  }
+
+  const checkIfEmailExist = await User.findOne({ where: { email: email } });
+  if (checkIfEmailExist) {
+    res.status(403).json({ msg: "Email já cadastrado" });
     return;
   }
 
@@ -52,6 +55,7 @@ const register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      role,
     });
     res.status(201).json({
       msg: "usuario criado com suscesso",
@@ -61,6 +65,12 @@ const register = async (req, res) => {
   } catch (error) {
     res.status(500).json({ msg: error });
   }
+};
+
+// GET CURRENT USER
+const getCurrentUser = async (req, res) => {
+  const user = req.user;
+  res.status(200).json({ user });
 };
 
 // GET BY ID
@@ -110,4 +120,4 @@ const login = async (req, res) => {
   res.status(200).json({ msg: "Bem vindo(a)", token: generateToken(user.id) });
 };
 
-module.exports = { register, getUserById, login };
+module.exports = { register, getCurrentUser, getUserById, login };
