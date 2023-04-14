@@ -16,7 +16,7 @@ const register = async (req, res) => {
   const { username, email, password, role } = req.body;
 
   //validations
-  if (!username || !email || !password || !role) {
+  if (!username || !password || !role) {
     return res
       .status(400)
       .json({ msg: "Informe todos os dados para se cadastrar" });
@@ -40,9 +40,12 @@ const register = async (req, res) => {
     return;
   }
 
-  const checkIfEmailExist = await User.findOne({ where: { email: email } });
-  if (checkIfEmailExist) {
-    res.status(403).json({ msg: "Email já cadastrado" });
+  if (email) {
+    const checkIfEmailExist = await User.findOne({ where: { email: email } });
+    if (checkIfEmailExist) {
+      res.status(403).json({ msg: "Email já cadastrado" });
+      return;
+    }
     return;
   }
 

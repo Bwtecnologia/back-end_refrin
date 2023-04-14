@@ -7,7 +7,7 @@ const checkToken = async (req, res, next) => {
   const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ msg: "rota protegida" });
+    return res.status(401).json({ msg: "Acesso negado" });
   }
   try {
     const jwtSecret = process.env.JWT_SECRET;
@@ -19,7 +19,7 @@ const checkToken = async (req, res, next) => {
 
     next();
   } catch (erro) {
-    res.status(400).json({ msg: "token invalido" });
+    res.status(400).json({ msg: "token inválido" });
   }
 };
 
