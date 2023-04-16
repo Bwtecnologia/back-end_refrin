@@ -40,12 +40,9 @@ const register = async (req, res) => {
     return;
   }
 
-  if (email) {
-    const checkIfEmailExist = await User.findOne({ where: { email: email } });
-    if (checkIfEmailExist) {
-      res.status(403).json({ msg: "Email já cadastrado" });
-      return;
-    }
+  const checkIfEmailExist = await User.findOne({ where: { email: email } });
+  if (checkIfEmailExist) {
+    res.status(403).json({ msg: "Email já cadastrado" });
     return;
   }
 
@@ -91,15 +88,15 @@ const getUserById = async (req, res) => {
 
 // LOGIN
 const login = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!username && !password) {
+  if (!email && !password) {
     res.status(422).json({ msg: "Informe nome e senha para entrar" });
     return;
   }
 
-  if (!username) {
-    res.status(422).json({ msg: "Nome é obrigatório" });
+  if (!email) {
+    res.status(422).json({ msg: "Email é obrigatório" });
     return;
   }
 
@@ -108,9 +105,9 @@ const login = async (req, res) => {
     return;
   }
 
-  const user = await User.findOne({ where: { username: username } });
+  const user = await User.findOne({ where: { email: email } });
   if (!user) {
-    res.status(400).json({ msg: "Usuário não encontrado" });
+    res.status(404).json({ msg: "Usuário não encontrado" });
     return;
   }
 

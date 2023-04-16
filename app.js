@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 //config para o cors
-app.use(cors());
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}))
 
 // rotas
 const router = require("./routes/routes");
