@@ -1,35 +1,27 @@
 const { DataTypes } = require("sequelize");
 const db = require("../config/conn");
 
-const User = db.define("User", {
-  username: {
+const Mail = db.define("Mail", {
+  subject: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  email: {
+  body: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  from: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  sector: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  branch: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  phone: {
+  to: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  role: {
-    type: DataTypes.STRING,
+  date: {
+    type: DataTypes.DATE,
     allowNull: false,
   },
 });
 
-module.exports = User;
+module.exports = Mail;

@@ -13,36 +13,26 @@ const generateToken = (id) => {
 
 // REGISTER USER
 const register = async (req, res) => {
-  const { username, email, password, role } = req.body;
+  const { username, email, sector, branch, phone, password, role } = req.body;
 
   //validations
-  if (!username || !password || !role) {
+  if (!username || !email || !phone || !password || !role) {
     return res
       .status(400)
-      .json({ msg: "Informe todos os dados para se cadastrar" });
+      .json({ message: "Informe todos os dados para se cadastrar" });
   }
-
-  // if (!confirmPassword) {
-  //   res.status(403).json({ msg: "Por favor confirme a senha" });
-  //   return;
-  // }
-
-  // if (password != confirmPassword) {
-  //   res.status(403).json({ msg: "As senhas não são iguais" });
-  //   return;
-  // }
 
   const checkIfUserExists = await User.findOne({
     where: { username: username },
   });
   if (checkIfUserExists) {
-    res.status(403).json({ msg: "Usuário já cadastrado" });
+    res.status(403).json({ message: "Usuário já cadastrado" });
     return;
   }
 
   const checkIfEmailExist = await User.findOne({ where: { email: email } });
   if (checkIfEmailExist) {
-    res.status(403).json({ msg: "Email já cadastrado" });
+    res.status(403).json({ message: "Email já cadastrado" });
     return;
   }
 
@@ -54,17 +44,26 @@ const register = async (req, res) => {
     const createdUser = await User.create({
       username,
       email,
+      sector,
+      branch,
+      phone,
       password: hashedPassword,
       role,
     });
     res.status(201).json({
-      msg: "usuario criado com suscesso",
+      message: "usuario criado com suscesso",
       token: generateToken(createdUser.id),
       createdUser,
     });
   } catch (error) {
-    res.status(500).json({ msg: error });
+    res.status(500).json({ message: error });
   }
+};
+
+// GET ALL USER
+const getAllUsers = async (req, res) => {
+  const data = await User.findAll();
+  res.status(200).json(data);
 };
 
 // GET CURRENT USER
@@ -91,33 +90,125 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email && !password) {
-    res.status(422).json({ msg: "Informe nome e senha para entrar" });
+    res.status(422).json({ message: "Informe nome e senha para entrar" });
     return;
   }
 
   if (!email) {
-    res.status(422).json({ msg: "Email é obrigatório" });
+    res.status(422).json({ message: "Email é obrigatório" });
     return;
   }
 
   if (!password) {
-    res.status(422).json({ msg: "Senha é obrigatória" });
+    res.status(422).json({ message: "Senha é obrigatória" });
     return;
   }
 
-  const user = await User.findOne({ where: { email: email } });
+  const user = await User.findOne({ where: { email } });
   if (!user) {
-    res.status(404).json({ msg: "Usuário não encontrado" });
+    res
+      .status(404)
+      .json({ message: "Usuário não encontrado, informe um email válido" });
     return;
   }
 
   const checkedPassword = await bcrypt.compare(password, user.password);
   if (!checkedPassword) {
-    res.status(422).json({ msg: "Senha inválida" });
+    res.status(422).json({ message: "Senha inválida" });
     return;
   }
 
-  res.status(200).json({ msg: "Bem vindo(a)", token: generateToken(user.id) });
+  res.status(200).json({
+    message: "Bem vindo(a)",
+    id: user.id,
+    role: user.role,
+    token: generateToken(user.id),
+  });
 };
 
-module.exports = { register, getCurrentUser, getUserById, login };
+// UPDATE USER
+const updateUser = async (req, res) => {
+  const { id } = req.params;
+  const { username, email, phone, password, role } = req.body;
+
+  console.log("req.body:", req.body);
+
+  if (!email) {
+    res.status(500).json({ message: "Email é obrigatório" });
+    return;
+  }
+
+  const user = await User.findOne({ where: { id: id } });
+
+  if (!user) {
+    res.status(404).json({ message: "Usuário não encontrado" });
+    return;
+  }
+
+  if (username) {
+    user.username = username;
+  }
+
+  if (email) {
+    user.email = email;
+  }
+
+  if (phone) {
+    user.phone = phone;
+  }
+
+  if (password) {
+    // create a password
+    const salt = bcrypt.genSaltSync(12);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+
+    user.password = hashedPassword;
+  }
+
+  if (role) {
+    user.role = role;
+  }
+
+  const newUser = {
+    username: user.username,
+    email: user.email,
+    phone: user.phone,
+    password: user.password,
+    role: user.role,
+  };
+
+  try {
+    const updatedUser = await User.update(newUser, { where: { id: id } });
+
+    res.status(200).json({ message: "Usuário atualizado com sucesso!" });
+  } catch (error) {
+    console.log("Error:", error);
+
+    res.status(500).json({ message: "Ocorreu um erro, tente novamente" });
+  }
+};
+
+// DELETE USER
+const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  const user = await User.findOne({ where: { id: id } });
+  if (!user) {
+    res.status(404).json({ message: "Usuário não encontrado" });
+    return;
+  }
+
+  await user.destroy({ where: { id: id } });
+
+  res.status(200).json({ message: "Usuário excluído com sucesso" });
+};
+
+module.exports = {
+  register,
+  getAllUsers,
+  getCurrentUser,
+  getUserById,
+  login,
+  updateUser,
+  deleteUser,
+};
