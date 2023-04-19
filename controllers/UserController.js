@@ -13,10 +13,11 @@ const generateToken = (id) => {
 
 // REGISTER USER
 const register = async (req, res) => {
-  const { username, email, sector, branch, phone, password, role } = req.body;
+  const { username, email, sector, branch, phone, password, role, actor } =
+    req.body;
 
   //validations
-  if (!username || !email || !phone || !password || !role) {
+  if (!username || !email || !phone || !password || !role || !actor) {
     return res
       .status(400)
       .json({ message: "Informe todos os dados para se cadastrar" });
@@ -49,6 +50,7 @@ const register = async (req, res) => {
       phone,
       password: hashedPassword,
       role,
+      actor,
     });
     res.status(201).json({
       message: "usuario criado com suscesso",
@@ -129,7 +131,7 @@ const login = async (req, res) => {
 // UPDATE USER
 const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { username, email, phone, password, role } = req.body;
+  const { username, email, phone, password, role, actor } = req.body;
 
   console.log("req.body:", req.body);
 
@@ -153,6 +155,10 @@ const updateUser = async (req, res) => {
     user.email = email;
   }
 
+  if (actor) {
+    user.actor = actor;
+  }
+
   if (phone) {
     user.phone = phone;
   }
@@ -173,6 +179,7 @@ const updateUser = async (req, res) => {
     username: user.username,
     email: user.email,
     phone: user.phone,
+    actor: user.actor,
     password: user.password,
     role: user.role,
   };
@@ -203,6 +210,19 @@ const deleteUser = async (req, res) => {
   res.status(200).json({ message: "Usuário excluído com sucesso" });
 };
 
+// GET BY ACTOR
+const getByActor = async (req, res) => {
+  const { value } = req.params;
+
+  const users = await User.findAll({ where: { actor: value } });
+  if (!users) {
+    res.status(404).json({ message: "Nenhum usuário não encontrado" });
+    return;
+  }
+
+  res.status(200).json(users);
+};
+
 module.exports = {
   register,
   getAllUsers,
@@ -211,4 +231,5 @@ module.exports = {
   login,
   updateUser,
   deleteUser,
+  getByActor,
 };

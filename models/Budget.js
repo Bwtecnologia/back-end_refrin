@@ -1,7 +1,8 @@
 const { DataTypes, Sequelize } = require("sequelize");
 const db = require("../config/conn");
+const User = require("../models/User");
 
-const Mail = db.define("Mail", {
+const Budget = db.define("Budget", {
   subject: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -24,4 +25,6 @@ const Mail = db.define("Mail", {
   },
 });
 
-module.exports = Mail;
+Budget.belongsTo(User, { foreignKey: "userId" });
+
+module.exports = Budget;

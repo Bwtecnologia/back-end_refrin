@@ -9,7 +9,8 @@ const {
   getUserById,
   login,
   updateUser,
-  deleteUser
+  deleteUser,
+  getByActor,
 } = require("../controllers/UserController");
 
 // middlewares
@@ -28,6 +29,8 @@ router.get("/:id", checkToken, getUserById);
 // update user
 router.put("/:id", checkToken, updateUser);
 // delete a user
-router.delete("/:id", checkToken, deleteUser)
+router.delete("/:id", checkToken, deleteUser);
+// get by actor
+router.get("/actor/:value", checkToken, getByActor);
 
 module.exports = router;

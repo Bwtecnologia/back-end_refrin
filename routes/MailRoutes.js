@@ -2,12 +2,20 @@ const express = require("express");
 const router = express.Router();
 
 // controller
-const { getAllMails } = require("../controllers/MailController")
+const {
+  createMail,
+  getById,
+  getAllMails,
+} = require("../controllers/MailController");
 
 // middlewares
 const checkToken = require("../middlewares/checkToken");
 
-// get current user
-router.get("/", getAllMails)
+// create mail
+router.post("/", createMail);
+// get by id
+router.get("/:id", getById);
+// get All email
+router.get("/", getAllMails);
 
 module.exports = router;
