@@ -13,7 +13,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 
-const conn = require("./config/conn");
+const conn = require("../config/conn");
 
 const app = express();
 const port = process.env.PORT;
@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
 // rotas
-const router = require("./routes/routes");
+const router = require("../routes/routes");
 app.use(router);
 
 // // EMAIL
