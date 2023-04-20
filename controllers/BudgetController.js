@@ -40,4 +40,15 @@ const getAllBySeller = async (req, res) => {
   res.status(200).json(budgets);
 };
 
-module.exports = { createBudget, getAll, getAllBySeller };
+const getById = async (req, res) => {
+  const { id } = req.params;
+  const budget = await Budget.findOne({ where: { id: id } });
+  if (!budget) {
+    res.status(404).json({ message: "Orçamento não encontrado" });
+    return;
+  }
+
+  res.status(200).json(budget);
+};
+
+module.exports = { createBudget, getAll, getAllBySeller, getById };

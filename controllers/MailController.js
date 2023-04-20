@@ -37,8 +37,18 @@ const getAllMails = async (req, res) => {
   res.status(200).json(data);
 };
 
+const deleteMail = async (req, res) => {
+  const { id } = req.params;
+  const mail = await Mail.findOne({ where: { id: id } });
+  if (!mail) return res.status(404).json({ message: "Email não encontrado" });
+
+  await mail.destroy({ where: { id: id } });
+  res.status(200).json({ message: "Solicitação Deletada" });
+};
+
 module.exports = {
   createMail,
   getById,
   getAllMails,
+  deleteMail,
 };
